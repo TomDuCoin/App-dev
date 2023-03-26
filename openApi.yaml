@@ -1,0 +1,590 @@
+---
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: Rattrapage Server API
+    description:
+        Provides registration to third-party Services. Enables the user to
+        automate tasks offered by these Services based on an widget logic.
+servers:
+    - url: http://localhost:8080
+
+paths:
+    "/users":
+        get:
+            summary: Login to Rattrapage Server
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: query
+                  name: login
+                  schema:
+                      "$ref": "#/components/schemas/AuthToken"
+                - in: header
+                  name: Authorization
+                  description: Basic http authorization
+                  schema:
+                      "$ref": "#/components/schemas/BasicAuthToken"
+                  required: true
+            responses:
+                "200":
+                    description: Successfully logged in
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/user"
+                "401":
+                    description: Incorrect password
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: User needs to register first
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "500":
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+        post:
+            summary: Signup to Rattrapage Server
+            security:
+                - BasicAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            "$ref": "#/components/schemas/user"
+            responses:
+                "200":
+                    description: Successfully registered
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/user"
+                "400":
+                    description: "Bad request. Missing request data (body and/or query parameters)."
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "403":
+                    description: User already registered
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "500":
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+    "/services":
+        get:
+            summary: "List available services"
+            security:
+                - BasicAuth: []
+            responses:
+                "200":
+                    description: "Data successfully retrieved"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/services"
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "500":
+                    description: "Internal server error"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+    "/dashboards":
+        get:
+            summary: "Get user dashboard"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+            responses:
+                '200':
+                    description: "Data successfully retrieved"
+                    content:
+                        application/json:
+                        schema:
+                            $ref: '#/components/schemas/dashboard'
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: "User id not found"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: "Internal server error"
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+        post:
+            summary: "Create dashboard"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+            requestBody:
+                required: true
+                content:
+                    application/json
+                        schema:
+                            "$ref": '#/components/schemas/dashboard'
+            responses:
+                '200':
+                    description: dashboard successfully created
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/dashboard"
+                '400':
+                    description: "Bad request. Missing request data (body and/or query parameters)."
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: Internal server error
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+    "/dashboards/{dashboardID}":
+        put:
+            summary: "Update dashboard"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+                - in: path
+                    name: dashboardID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+            requestBody:
+                required: true
+                content:
+                    application/json
+                        schema:
+                            "$ref": '#/components/schemas/dashboard'
+            responses:
+                '200':
+                    description: Dashboard successfully modified
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: "Dashboard id not found"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: Internal server error
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+        delete:
+            summary: "Update dashboard"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+                - in: path
+                    name: dashboardID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+            responses:
+                '200':
+                    description: Dashboard successfully deleted
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: "Dashboard id not found"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: Internal server error
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+    "/dashboards/{dashboardID}/widgets":
+        post:
+            summary: "Create new widget inside a dashboard"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+                - in: path
+                    name: dashboardID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+            requestBody:
+                required: true
+                content:
+                    application/json
+                        schema:
+                            "$ref": '#/components/schemas/widget'
+            responses:
+                '200':
+                    description: widget successfully created
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/widget"
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: "Dashboard id not found"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: Internal server error
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+    "/dashboards/{dashboardID}/widgets/{widgetID}":
+        put:
+            summary: "Update widget pointed by dashboardID and widgetID"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+                - in: path
+                    name: dashboardID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+                - in: path
+                    name: widgetID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+            requestBody:
+                required: true
+                content:
+                    application/json
+                        schema:
+                            "$ref": '#/components/schemas/widget'
+            responses:
+                '200':
+                    description: widget successfully updated
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: "Dashboard id not found"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: Internal server error
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+        delete:
+            summary: "Update widget pointed by dashboardID and widgetID"
+            security:
+                - BasicAuth: []
+            parameters:
+                - in: header
+                    name: X-User-ID
+                    description: UUID of user
+                    schema:
+                        "$ref": '#/components/schemas/AuthToken'
+                - in: path
+                    name: dashboardID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+                - in: path
+                    name: widgetID
+                    required: true
+                    schema:
+                        "$ref": '#/components/schemas/Id'
+            responses:
+                '200':
+                    description: widget successfully deleted
+                "401":
+                    description: "User did not sign in"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                "404":
+                    description: "Dashboard or widget id not found"
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Error"
+                '500':
+                    description: Internal server error
+                    content:
+                        application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+    "/oauth/google":
+        post:
+            summary: "Google third party authentification endpoint"
+        requestBody:
+            required: true
+            properties:
+                code:
+                    type: string
+        responses:
+            '200':
+                description: user succeffully identified
+                content:
+                    application/json:
+                        schema:
+                            "$ref": "#/components/schemas/user"
+            "401":
+                description: "Unauthorized"
+                content:
+                    application/json:
+                        schema:
+                            "$ref": "#/components/schemas/Error"
+            '500':
+                description: Internal server error
+                content:
+                    application/json:
+                    schema:
+                        "$ref": "#/components/schemas/Error"
+
+
+components:
+    schemas:
+        user:
+            type: object
+            required:
+                - _id
+                - mail
+                - name
+            properties:
+                _id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                mail:
+                    "$ref": "#/components/schemas/Email"
+        service:
+            type: object
+            required:
+                - _id
+                - name
+                - icon
+                - backgroundColor
+                - variant
+                - actions
+            properties:
+                _id:
+                    type: string
+                name:
+                    type: string
+                icon:
+                    type: string
+                    description: server path to icon file
+                backgroundColor:
+                    $ref: "#/components/schemas/color"
+                variant:
+                    type: string
+                actions:
+                    type: array
+                    items:
+                        "$ref": "#/components/schemas/action"
+        services:
+            type: array
+            items:
+                $ref: "#/components/schemas/service"
+        parameters:
+            type: array
+            items:
+                type: string
+        parametersValues:
+            description: Key-value pairs list of action/reaction parameters
+            type: array
+
+        ServiceName:
+            type: string
+            format: "[a-z0-9]"
+        Id:
+            type: number
+        name:
+            type: string
+        color:
+            type: string
+            format: "^#[a-z0-9]"
+        Email:
+            type: string
+            format: email
+            pattern: "^.+@.+\\..+$"
+        Dashboards:
+            type: array
+            items:
+                $ref: '#/components/schemas/dashboard'
+        dashboard:
+            type: object
+            required:
+                - _id
+                - title
+                - description
+                - widgets
+            properties:
+                _id:
+                    type: string
+                title:
+                    type: string
+                description:
+                    type: string
+                widgets:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/widget'
+        widget:
+            type: object
+            required:
+                -  _id
+                - name
+                - description
+                - params
+                - url
+                - timer
+            properties:
+                _id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                params:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/param'
+                url:
+                    type: string
+                timer:
+                    type: string
+        param:
+            type: object
+            required:
+                - name
+                - type
+            properties:
+                name:
+                    type: string
+                type:
+                    type: string
+        Error:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    description: A human readable error message
+                    type: string
+        AuthToken:
+            type: string
+            format: uuid
+        BasicAuthToken:
+            description: Base64 encoded user email and password, seperated by ':'
+            type: string
+            pattern: "^.+:.+$"
+        SuccessMessage:
+            description: Message sent with empty-bodied successful response
+            type: string
+        OAuthTokenRequest:
+            type: object
+            required:
+                - url
+            properties:
+                url:
+                    description: "Third-party URL to be used by server to get OAuth2 access token"
+                    type: string
+                    format: 'https://.+\..+'
+    securitySchemes:
+        BasicAuth:
+            type: http
+            scheme: basic
+
+security:
+    - BasicAuth: []

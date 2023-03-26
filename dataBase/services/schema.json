@@ -1,0 +1,32 @@
+{
+	"bsonType": "object",
+	"required": ["_id", "name", "widgets"],
+	"uniqueItems": true,
+	"properties": {
+		"_id":           {"bsonType": "objectId"},
+        "name":          {"bsonType": "string"},
+		"widgets": {
+			"bsonType": "array",
+			"uniqueItems": true,
+			"minItems": 0,
+			"items": {
+				"bsonType": "object",
+				"required": ["_id", "name", "description", "params"],
+				"properties": {
+					"_id":  {"bsonType": "objectId"},
+					"name":  {"bsonType": "string"},
+					"description": {"bsonType": "string"},
+					"params": {
+						"bsonType": "object",
+						"uniqueItems": true,
+						"required": ["name", "type"],
+						"properties": {
+							"name": {"bsonType": "string"},
+							"type": {"bsonType": "string"}
+						}
+					}
+				}
+			}
+		}
+	}
+}

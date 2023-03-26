@@ -1,0 +1,60 @@
+{
+    "bsonType": "object",
+    "required": ["_id", "mail", "name"],
+    "properties": {
+        "_id": {"bsonType": "binData"},
+        "name": {"bsonType": "string"},
+        "mail": {
+            "bsonType": "string",
+            "pattern": "^.+@.+\\..+$"
+        },
+        "pwd": {"bsonType": "string"},
+        "oauthCredentials": {
+            "bsonType": "object",
+            "properties": {
+                "accessToken":     {"bsonType": "string"},
+                "serviceUserName": {"bsonType": "string"},
+                "tokenType":       {"bsonType": "string"}
+            }
+        },
+		"dashboards": {
+			"bsonType": "array",
+			"uniqueItems": true,
+			"minItems": 0,
+			"items": {
+				"bsonType": "object",
+				"required": ["_id", "title", "description"],
+				"properties": {
+					"_id":           {"bsonType": "objectId"},
+					"title":		 {"bsonType": "string"},
+					"description":	 {"bsonType": "string"},
+					"widgets": {
+						"bsonType": "array",
+						"uniqueItems": true,
+						"minItems": 0,
+						"items": {
+							"bsonType": "object",
+							"required": ["_id", "name", "description", "params"],
+							"properties": {
+								"_id":  {"bsonType": "objectId"},
+								"name":  {"bsonType": "string"},
+								"description": {"bsonType": "string"},
+								"params": {
+									"bsonType": "object",
+									"uniqueItems": true,
+									"required": ["name", "type"],
+									"properties": {
+										"name": {"bsonType": "string"},
+										"type": {"bsonType": "string"}
+									}
+								},
+								"url": {"bsonType": "string"},
+								"timer": {"bsonType": "string"}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

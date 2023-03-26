@@ -1,0 +1,38 @@
+version: "3.9"
+
+
+services:
+  server:
+    build: "./src/serverApi"
+    restart: on-failure
+    env_file:
+      "./src/serverApi/.env"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment:
+      NODE_ENV: prod
+
+  database:
+    build: "./dataBase/"
+    restart: on-failure
+    env_file:
+      "./dataBase/.env"
+    ports:
+      - "27017:27017"
+    volumes:
+      - "db-data:/data/db"
+
+  client_web:
+    build: "./src/web-client/"
+    restart: on-failure
+    env_file:
+      "./src/web-client/.env"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+volumes:
+  db-data:

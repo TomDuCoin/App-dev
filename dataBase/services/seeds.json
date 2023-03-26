@@ -1,0 +1,51 @@
+[
+	{
+		"name": "Giphy",
+		"widgets": [
+			{
+				"name": "trending",
+				"description": "get trending api gifs",
+				"params": [
+					{
+						"name": "limit",
+						"type": "number"
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "News API",
+		"widgets": [
+			{
+				"name": "headlines",
+				"description": "display headline news about a given subject",
+				"params": [
+					{
+						"name": "subject",
+						"type": "string"
+					},
+					{
+						"name": "limit",
+						"type": "number"
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "Nasa",
+		"widgets": [
+			{
+				"name": "APOD",
+				"description": "Insane random photos from the Nasa",
+				"params": [
+					{
+						"name": "count",
+						"type": "number"
+					}
+				]
+			}
+		]
+ 	}
+]

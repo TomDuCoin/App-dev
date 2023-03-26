@@ -1,0 +1,10 @@
+[
+    {
+        "_id": "aab24925-1b19-5d4f-98bd-d57f90262cb2",
+        "name": "User TestUser",
+        "mail": "testing@testingmail.com",
+        "pwd": "password",
+        "oauthCredentials": {},
+		"dashboards": []
+    }
+]
